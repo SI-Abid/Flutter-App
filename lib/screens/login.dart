@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/screens/signup.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -84,6 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       onSaved: (newValue) => passwordController.text = newValue!,
       textInputAction: TextInputAction.done,
+      onFieldSubmitted: (value) => _logIn(),
     );
 
     final loginButton = Material(
@@ -226,6 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
           builder: (context) => const HomeScreen(),
         ),
       );
+      // FlutterRingtonePlayer.
     }).catchError((e) {
       Navigator.of(context).pop();
       Fluttertoast.showToast(
@@ -237,6 +240,9 @@ class _LoginScreenState extends State<LoginScreen> {
         textColor: Colors.white,
         fontSize: 16.0,
       );
+      // play a sound using flutter_ringtone_player
+      // FlutterRingtonePlayer.playNotification();
+
     });
   }
 }

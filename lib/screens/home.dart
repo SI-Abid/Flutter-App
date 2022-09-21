@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/screens/login.dart';
 import 'package:flutter_app/screens/profile.dart';
 
@@ -15,27 +13,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
-  UserModel? loggedInUser = UserModel();
-
-  @override
-  void initState() {
-    super.initState();
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      loggedInUser = UserModel.fromMap(value.data()!);
-      setState(() {});
-      if(user!.emailVerified){
-        loggedInUser!.verified = true;
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(user!.uid)
-            .update(loggedInUser!.toMap());
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,9 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfileScreen(
-                        user: loggedInUser,
-                      )),
+                  builder: (context) => const ProfileScreen()),
             );
           }
         },
@@ -95,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 20),
               Text(
-                'Logged in as ${loggedInUser!.name}',
+                '${user!.uid}',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -103,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Your email is ${loggedInUser!.email}',
+                'Your email is ${user!.email}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
