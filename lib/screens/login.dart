@@ -1,8 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/screens/signup.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,10 +16,13 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final db = FirebaseFirestore.instance;
+  UserModel? user;
   final formKey = GlobalKey<FormState>();
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool hidePassword = true;
 
   final auth = FirebaseAuth.instance;
 
@@ -61,17 +65,26 @@ class _LoginScreenState extends State<LoginScreen> {
       onSaved: (newValue) => emailController.text = newValue!,
       textInputAction: TextInputAction.next,
     );
-
     final passwordField = TextFormField(
       controller: passwordController,
       autofocus: false,
-      obscureText: true,
-      decoration: const InputDecoration(
-        prefixIcon: Icon(Icons.vpn_key),
-        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+      obscureText: hidePassword,
+      decoration: InputDecoration(
+        prefixIcon: const Icon(Icons.vpn_key),
+        suffixIcon: GestureDetector(
+          onTap: () {
+            // print('tapped');
+            setState(() {
+              hidePassword = !hidePassword;
+            });
+            // print(hidePassword);
+          },
+          child: Icon(hidePassword ? Icons.visibility : Icons.visibility_off),
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         hintText: 'Enter your password',
         // labelText: 'Password',
-        border: OutlineInputBorder(
+        border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(15.0),
           ),
@@ -208,9 +221,8 @@ class _LoginScreenState extends State<LoginScreen> {
         .signInWithEmailAndPassword(
       email: emailController.text,
       password: passwordController.text,
-      
     )
-        .then((value) {
+        .then((value) async {
       print('signed in');
       // dismiss loading indicator
       Navigator.of(context).pop();
@@ -223,12 +235,20 @@ class _LoginScreenState extends State<LoginScreen> {
         textColor: Colors.white,
         fontSize: 16.0,
       );
+      await db.enableNetwork();
+      final ref = db.collection(auth.currentUser!.uid)
+          .doc('user')
+          .withConverter(
+            fromFirestore: UserModel.fromMap,
+            toFirestore: (user, _) => user.toMap(),
+          );
+      final snap = await ref.get();
+      final user = snap.data();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
+          builder: (context) => HomeScreen(user: user,),
         ),
       );
-      // FlutterRingtonePlayer.
     }).catchError((e) {
       Navigator.of(context).pop();
       Fluttertoast.showToast(
@@ -242,7 +262,6 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       // play a sound using flutter_ringtone_player
       // FlutterRingtonePlayer.playNotification();
-
     });
   }
 }

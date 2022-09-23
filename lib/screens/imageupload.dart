@@ -44,6 +44,11 @@ class _ImageUploadState extends State<ImageUpload> {
         content: Text('Image uploaded'),
         duration: Duration(seconds: 1),
       ));
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Image upload failed'),
+        duration: Duration(seconds: 1),
+      ));
     });
   }
 

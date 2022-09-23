@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/firebase_options.dart';
 import 'package:flutter_app/screens/home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -98,17 +100,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
       onSaved: (newValue) => emailController.text = newValue!,
       textInputAction: TextInputAction.next,
     );
-
+    bool hidePass = true;
     final passwordField = TextFormField(
       controller: passwordController,
       autofocus: false,
-      obscureText: true,
-      decoration: const InputDecoration(
-        prefixIcon: Icon(Icons.vpn_key),
-        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+      obscureText: hidePass,
+      decoration: InputDecoration(
+        prefixIcon: const Icon(Icons.vpn_key),
+        suffixIcon: GestureDetector(
+          onTap: (() => setState(() => hidePass = !hidePass)),
+          child: const Icon(Icons.remove_red_eye),
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         hintText: 'Enter password',
         // labelText: 'Password',
-        border: OutlineInputBorder(
+        border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(20.0),
           ),
@@ -378,7 +384,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   saveToFirestore() async {
-    final firestore = FirebaseFirestore.instance;
+    final ref = FirebaseDatabase.instance;
+    // ref.enableNetwork();
+    final doc = ref.refFromURL(DefaultFirebaseOptions.databaseURL)
+        .child('users')
+        .child(auth.currentUser!.uid);
+
     final User? user = auth.currentUser;
 
     final userModel = UserModel(
@@ -391,18 +402,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
       verified: false,
     );
 
-    await firestore
-        .collection('users')
-        .doc(user.uid)
-        .set(userModel.toMap())
-        .then((value) => {
-              Navigator.of(context).pop(),
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
-                (route) => false,
-              ),
-            });
+    await doc.set({
+      'uid': userModel.uid,
+      'name': userModel.name,
+      'email': userModel.email,
+      'id': userModel.id,
+      'phone': userModel.phone,
+      'role': userModel.role,
+      'verified': userModel.verified,
+    }).then((value) => {
+          Navigator.of(context).pop(),
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HomeScreen(
+                      user: userModel,
+                    )),
+            (route) => false,
+          ),
+        });
 
     Fluttertoast.showToast(
       msg: 'Sign Up Successful',

@@ -1,18 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/screens/login.dart';
 import 'package:flutter_app/screens/profile.dart';
 
 class HomeScreen extends StatefulWidget {
-  // final user = FirebaseAuth.instance.currentUser;
-  const HomeScreen({super.key});
+  final UserModel? user;
+  const HomeScreen({super.key, required this.user});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  User? user = FirebaseAuth.instance.currentUser;
+  UserModel? user;
+
+  @override
+  void initState() {
+    super.initState();
+    user = widget.user;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (index == 2) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const ProfileScreen()),
+              MaterialPageRoute(builder: (context) => const ProfileScreen()),
             );
           }
         },
@@ -70,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 20),
               Text(
-                '${user!.uid}',
+                'Logged in as ${user!.name}',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -78,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Your email is ${user!.email}',
+                'Verified ${user!.role}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

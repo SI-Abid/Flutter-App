@@ -1,5 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
-  
   String? uid;
   String? name;
   String? email;
@@ -21,16 +22,18 @@ class UserModel {
   });
 
   // getting from server
-  factory UserModel.fromMap(Map<String, dynamic> map) {
+  factory UserModel.fromMap(DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    final data = snapshot.data();
     return UserModel(
-      uid: map['uid'],
-      name: map['name'],
-      email: map['email'],
-      id: map['id'],
-      photoUrl: map['photoUrl'],
-      phone: map['phone'],
-      role: map['role'],
-      verified: map['verified'],
+      uid: data?['uid'],
+      name: data?['name'],
+      email: data?['email'],
+      id: data?['id'],
+      photoUrl: data?['photoUrl'],
+      phone: data?['phone'],
+      role: data?['role'],
+      verified: data?['verified'],
     );
   }
 
@@ -47,30 +50,5 @@ class UserModel {
       'verified': verified,
     };
   }
-
-  // implementing setters and getters
-  String get getUid => uid!;
-  set setUid(String value) => uid = value;
-
-  String get getName => name!;
-  set setName(String value) => name = value;
-
-  String get getEmail => email!;
-  set setEmail(String value) => email = value;
-
-  String get getId => id!;
-  set setId(String value) => id = value;
-
-  String get getPhotoUrl => photoUrl!;
-  set setPhotoUrl(String value) => photoUrl = value;
-
-  String get getPhone => phone!;
-  set setPhone(String value) => phone = value;
-
-  String get getRole => role!;
-  set setRole(String value) => role = value;
-
-  bool get getVerified => verified!;
-  set setVerified(bool value) => verified = value;
 
 }
