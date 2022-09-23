@@ -386,9 +386,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   saveToFirestore() async {
     final ref = FirebaseDatabase.instance;
     // ref.enableNetwork();
-    final doc = ref.refFromURL(DefaultFirebaseOptions.databaseURL)
-        .child('users')
-        .child(auth.currentUser!.uid);
+    final doc = ref.ref('users/${auth.currentUser!.uid}');
 
     final User? user = auth.currentUser;
 
