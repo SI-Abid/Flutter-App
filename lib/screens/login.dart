@@ -211,7 +211,9 @@ class _LoginScreenState extends State<LoginScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return const Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: Colors.teal,
+          ),
         );
       },
     );
@@ -236,17 +238,18 @@ class _LoginScreenState extends State<LoginScreen> {
         fontSize: 16.0,
       );
       await db.enableNetwork();
-      final ref = db.collection(auth.currentUser!.uid)
-          .doc('user')
-          .withConverter(
-            fromFirestore: UserModel.fromMap,
-            toFirestore: (user, _) => user.toMap(),
-          );
+      final ref =
+          db.collection(auth.currentUser!.uid).doc('user').withConverter(
+                fromFirestore: UserModel.fromMap,
+                toFirestore: (user, _) => user.toMap(),
+              );
       final snap = await ref.get();
       final user = snap.data();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => HomeScreen(user: user,),
+          builder: (context) => HomeScreen(
+            user: user,
+          ),
         ),
       );
     }).catchError((e) {

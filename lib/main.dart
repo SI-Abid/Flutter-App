@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/user.dart';
+import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/screens/login.dart';
 
 import 'firebase_options.dart';
@@ -11,6 +14,7 @@ Future<void> main(List<String> args) async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  // print(FirebaseAuth.instance.currentUser!);
   runApp(MyApp());
 }
 
@@ -18,7 +22,7 @@ class MyApp extends StatelessWidget {
   MyApp({
     Key? key,
   }) : super(key: key);
-  
+
   final navigatorKey = GlobalKey<NavigatorState>();
 
   @override
@@ -43,6 +47,31 @@ class MyApp extends StatelessWidget {
             },
           ),
         ),
-        home: const LoginScreen());
+        home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(snapshot.data!.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return HomeScreen(
+                      user: UserModel.fromMap(snapshot.data!, null),
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              );
+            } else {
+              return const LoginScreen();
+            }
+          },
+        ));
   }
 }
