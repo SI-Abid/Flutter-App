@@ -14,8 +14,32 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  User? user = FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser = UserModel();
+  User user = FirebaseAuth.instance.currentUser as User;
+  late UserModel loggedInUser;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    final ref = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .withConverter(
+          fromFirestore: UserModel.fromMap,
+          toFirestore: (user, _) => user.toMap(),
+        );
+    ref.get().then((value) {
+      setState(() {
+        loggedInUser = value.data()!;
+        if (!loggedInUser.verified && user.emailVerified) {
+          loggedInUser.verified = true;
+        }
+        isLoading = false;
+        // send to server
+        ref.set(loggedInUser);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,87 +48,90 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: const Text('Profile'),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 20.0,
-          ),
-          Center(
-            child: Stack(
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
               children: [
-                CircleAvatar(
-                  radius: 80.0,
-                  backgroundImage: NetworkImage(loggedInUser.photoUrl == null
-                      ? 'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png'
-                      : loggedInUser.photoUrl!),
+                const SizedBox(
+                  height: 20.0,
                 ),
-                const Positioned(
-                  bottom: 20.0,
-                  right: 20.0,
-                  child: InkWell(
-                    onTap: null,
-                    // onTap: () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) =>
-                    //             ImageUpload(userId: user!.uid)),
-                    //   );
-                    // },
-                    child: Icon(
-                      Icons.camera_alt,
-                      color: Colors.teal,
-                      size: 28.0,
-                    ),
+                Center(
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 80.0,
+                        backgroundImage: NetworkImage(loggedInUser.photoUrl ??
+                            'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png'),
+                      ),
+                      const Positioned(
+                        bottom: 20.0,
+                        right: 20.0,
+                        child: InkWell(
+                          onTap: null,
+                          // onTap: () {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) =>
+                          //             ImageUpload(userId: user!.uid)),
+                          //   );
+                          // },
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.teal,
+                            size: 28.0,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                const SizedBox(
+                  height: 20.0,
+                ),
+                Text(
+                  'Name ${loggedInUser.name}',
+                  style: const TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20.0,
+                ),
+                Text(
+                  'Email ${loggedInUser.email}',
+                  style: const TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20.0,
+                ),
+                Text(
+                  'Phone ${loggedInUser.phone}',
+                  style: const TextStyle(
+                    fontSize: 18.0,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20.0,
+                ),
+                // if verified show verified else show verify button
+                loggedInUser.verified == true
+                    ? const Icon(
+                        Icons.verified,
+                        color: Colors.green,
+                      )
+                    : ElevatedButton(
+                        onPressed: sendVerifyLink,
+                        child: const Text('Verify'),
+                      ),
               ],
             ),
-          ),
-          const SizedBox(
-            height: 20.0,
-          ),
-          Text(
-            'Name ${loggedInUser.name}',
-            style: const TextStyle(
-              fontSize: 25.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(
-            height: 20.0,
-          ),
-          Text(
-            'Email ${loggedInUser.email}',
-            style: const TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(
-            height: 20.0,
-          ),
-          Text(
-            'Phone ${loggedInUser.phone}',
-            style: const TextStyle(
-              fontSize: 18.0,
-            ),
-          ),
-          const SizedBox(
-            height: 20.0,
-          ),
-          // if verified show verified else show verify button
-          loggedInUser.verified != null && loggedInUser.verified == true
-              ? const Icon(
-                  Icons.verified,
-                  color: Colors.green,
-                )
-              : ElevatedButton(
-                  onPressed: sendVerifyLink,
-                  child: const Text('Verify'),
-                ),
-        ],
-      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -124,7 +151,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (index == 0) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen(user: loggedInUser)),
+              MaterialPageRoute(
+                  builder: (context) => HomeScreen(user: loggedInUser)),
             );
           }
         },
@@ -133,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   sendVerifyLink() async {
-    if (user!.emailVerified) {
+    if (user.emailVerified) {
       Fluttertoast.showToast(
           msg: 'Email already verified',
           toastLength: Toast.LENGTH_SHORT,
@@ -143,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           textColor: Colors.black,
           fontSize: 16.0);
     } else {
-      await user!.sendEmailVerification();
+      await user.sendEmailVerification();
       Fluttertoast.showToast(
           msg: "Verification link sent to your email",
           toastLength: Toast.LENGTH_SHORT,

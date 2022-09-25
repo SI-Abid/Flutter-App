@@ -1,39 +1,39 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
-  String? uid;
-  String? name;
-  String? email;
-  String? id;
+  String uid;
+  String name;
+  String email;
+  String id;
   String? photoUrl;
-  String? phone;
-  String? role;
-  bool? verified;
+  String phone;
+  String role;
+  bool verified;
 
   UserModel({
-    this.uid,
-    this.name,
-    this.email,
-    this.id,
+    required this.uid,
+    required this.name,
+    required this.email,
+    required this.id,
     this.photoUrl,
-    this.phone,
-    this.role,
-    this.verified,
+    required this.phone,
+    required this.role,
+    required this.verified,
   });
 
   // getting from server
   factory UserModel.fromMap(DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options) {
-    final data = snapshot.data();
+    final data = snapshot.data() as Map<String, dynamic>;
     return UserModel(
-      uid: data?['uid'],
-      name: data?['name'],
-      email: data?['email'],
-      id: data?['id'],
-      photoUrl: data?['photoUrl'],
-      phone: data?['phone'],
-      role: data?['role'],
-      verified: data?['verified'],
+      uid: data['uid'],
+      name: data['name'],
+      email: data['email'],
+      id: data['id'],
+      photoUrl: data['photoUrl'],
+      phone: data['phone'],
+      role: data['role'],
+      verified: data['verified'],
     );
   }
 

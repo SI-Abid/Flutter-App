@@ -28,8 +28,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
+    // Clean up the controller when the widget is disposed.
     emailController.dispose();
     passwordController.dispose();
+    formKey.currentState!.dispose();
+    db.terminate();
     super.dispose();
   }
 
@@ -225,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
       password: passwordController.text,
     )
         .then((value) async {
-      print('signed in');
+      // print('signed in');
       // dismiss loading indicator
       Navigator.of(context).pop();
       Fluttertoast.showToast(
@@ -248,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => HomeScreen(
-            user: user,
+            user: user as UserModel,
           ),
         ),
       );

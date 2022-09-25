@@ -29,7 +29,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final confirmPasswordController = TextEditingController();
   final idController = TextEditingController();
   final phoneController = TextEditingController();
-  String? roleController;
+  final roleController = TextEditingController();
 
   @override
   void dispose() {
@@ -246,7 +246,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ],
       onChanged: (value) {
-        roleController = value!.toString();
+        roleController.text = value!.toString();
       },
       validator: (value) {
         if (value == null || value.toString().isEmpty) {
@@ -254,7 +254,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
         return null;
       },
-      onSaved: (newValue) => roleController = newValue!.toString(),
+      onSaved: (newValue) => roleController.text = newValue!.toString(),
     );
 
     final signupButton = Material(
@@ -400,7 +400,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       email: emailController.text,
       id: idController.text,
       phone: phoneController.text,
-      role: roleController,
+      role: roleController.text,
       verified: false,
     );
 

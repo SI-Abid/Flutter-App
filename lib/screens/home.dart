@@ -5,7 +5,7 @@ import 'package:flutter_app/screens/login.dart';
 import 'package:flutter_app/screens/profile.dart';
 
 class HomeScreen extends StatefulWidget {
-  final UserModel? user;
+  final UserModel user;
   const HomeScreen({super.key, required this.user});
 
   @override
@@ -13,7 +13,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  UserModel? user;
+  late UserModel user;
 
   @override
   void initState() {
@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 20),
               Text(
-                'Logged in as ${user!.name}',
+                'Logged in as ${user.name}',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Verified ${user!.role}',
+                'Role: ${user.role}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
