@@ -386,11 +386,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   saveToFirestore() async {
     final ref = FirebaseFirestore.instance;
     // ref.enableNetwork();
-    final doc = ref.collection('users').doc(auth.currentUser!.uid).
-    withConverter(
-      fromFirestore: UserModel.fromMap,
-      toFirestore: (user, _) => user.toMap(),
-    );
+    final doc =
+        ref.collection('users').doc(auth.currentUser!.uid).withConverter(
+              fromFirestore: UserModel.fromMap,
+              toFirestore: (user, _) => user.toMap(),
+            );
 
     final User? user = auth.currentUser;
 
@@ -404,8 +404,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       verified: false,
     );
 
-    await doc.set(userModel)
-    .then((value) => {
+    await doc.set(userModel).then((value) => {
           Navigator.of(context).pop(),
           Navigator.pushAndRemoveUntil(
             context,

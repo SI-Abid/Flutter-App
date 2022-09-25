@@ -50,5 +50,4 @@ class UserModel {
       'verified': verified,
     };
   }
-
 }
