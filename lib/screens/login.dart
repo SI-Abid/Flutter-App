@@ -17,7 +17,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final db = FirebaseFirestore.instance;
-  UserModel? user;
+  late UserModel user;
   final formKey = GlobalKey<FormState>();
 
   final emailController = TextEditingController();
@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // Clean up the controller when the widget is disposed.
     emailController.dispose();
     passwordController.dispose();
-    formKey.currentState!.dispose();
+    // formKey.currentState!.dispose();
     db.terminate();
     super.dispose();
   }
@@ -228,32 +228,22 @@ class _LoginScreenState extends State<LoginScreen> {
       password: passwordController.text,
     )
         .then((value) async {
-      // print('signed in');
-      // dismiss loading indicator
+      print('signed in');
+      // get user data
+      final snap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(value.user!.uid)
+          .withConverter(
+            fromFirestore: UserModel.fromMap,
+            toFirestore: (user, _) => user.toMap(),
+          )
+          .get();
+      final user = snap.data()!;
+      // print(user!.name);
+      // remove loading indicator
       Navigator.of(context).pop();
-      Fluttertoast.showToast(
-        msg: 'Login Successful',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      await db.enableNetwork();
-      final ref =
-          db.collection(auth.currentUser!.uid).doc('user').withConverter(
-                fromFirestore: UserModel.fromMap,
-                toFirestore: (user, _) => user.toMap(),
-              );
-      final snap = await ref.get();
-      final user = snap.data();
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => HomeScreen(
-            user: user as UserModel,
-          ),
-        ),
+        MaterialPageRoute(builder: (context) => HomeScreen(user: user)),
       );
     }).catchError((e) {
       Navigator.of(context).pop();

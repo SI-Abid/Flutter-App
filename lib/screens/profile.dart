@@ -65,20 +65,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         backgroundImage: NetworkImage(loggedInUser.photoUrl ??
                             'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png'),
                       ),
-                      const Positioned(
+                      Positioned(
                         bottom: 20.0,
                         right: 20.0,
                         child: InkWell(
-                          onTap: null,
-                          // onTap: () {
-                          //   Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) =>
-                          //             ImageUpload(userId: user!.uid)),
-                          //   );
-                          // },
-                          child: Icon(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ImageUpload(userId: user.uid)),
+                            );
+                          },
+                          child: const Icon(
                             Icons.camera_alt,
                             color: Colors.teal,
                             size: 28.0,
@@ -92,7 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 20.0,
                 ),
                 Text(
-                  'Name ${loggedInUser.name}',
+                  loggedInUser.name,
                   style: const TextStyle(
                     fontSize: 25.0,
                     fontWeight: FontWeight.bold,
@@ -102,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 20.0,
                 ),
                 Text(
-                  'Email ${loggedInUser.email}',
+                  'Email: ${loggedInUser.email}',
                   style: const TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
@@ -112,7 +111,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 20.0,
                 ),
                 Text(
-                  'Phone ${loggedInUser.phone}',
+                  'ID: ${loggedInUser.id}',
+                  style: const TextStyle(
+                    fontSize: 20.0,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20.0,
+                ),
+                Text(
+                  'Phone: ${loggedInUser.phone}',
                   style: const TextStyle(
                     fontSize: 18.0,
                   ),
@@ -133,6 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 2,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -149,10 +158,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
         onTap: (index) {
           if (index == 0) {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => HomeScreen(user: loggedInUser)),
+                  builder: (context) => HomeScreen(
+                        user: loggedInUser,
+                      )),
             );
           }
         },
