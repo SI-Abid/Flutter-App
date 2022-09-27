@@ -15,6 +15,12 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   User user = FirebaseAuth.instance.currentUser as User;
+  final ref = FirebaseFirestore.instance
+      .collection('users')
+      .withConverter(
+          fromFirestore: UserModel.fromMap,
+          toFirestore: (user, _) => user.toMap())
+      .doc(FirebaseAuth.instance.currentUser!.uid);
   late UserModel loggedInUser;
   bool isLoading = true;
 
@@ -23,13 +29,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // listen to changes in the user's email verification status
     super.initState();
     user.reload();
-    final ref = FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .withConverter(
-          fromFirestore: UserModel.fromMap,
-          toFirestore: (user, _) => user.toMap(),
-        );
     ref.get().then((value) {
       setState(() {
         loggedInUser = value.data()!;
@@ -178,6 +177,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (user.emailVerified) {
       setState(() {
         loggedInUser.verified = user.emailVerified;
+        // save to server
+        ref.set(loggedInUser);
       });
       Fluttertoast.showToast(
           msg: 'Email verified',
@@ -197,8 +198,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: Colors.orange,
           textColor: Colors.white,
           fontSize: 16.0);
-      // Fluttertoast.showToast(msg: 'Verification Link Sent');
     }
-    // await FirebaseAuth.instance.currentUser!.sendEmailVerification();
   }
 }
