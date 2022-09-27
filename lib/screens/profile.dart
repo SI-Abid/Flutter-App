@@ -20,7 +20,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
+    // listen to changes in the user's email verification status
     super.initState();
+    user.reload();
     final ref = FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
@@ -173,6 +175,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   sendVerifyLink() async {
     if (user.emailVerified) {
+      user.reload();
+      setState(() {
+        loggedInUser.verified = user.emailVerified;
+      });
       Fluttertoast.showToast(
           msg: 'Email already verified',
           toastLength: Toast.LENGTH_SHORT,
