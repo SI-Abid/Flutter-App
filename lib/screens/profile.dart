@@ -64,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       CircleAvatar(
                         radius: 80.0,
-                        backgroundImage: NetworkImage(loggedInUser.photoUrl ??
+                        backgroundImage: NetworkImage(loggedInUser.imageUrl ??
                             'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png'),
                       ),
                       Positioned(
@@ -174,13 +174,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   sendVerifyLink() async {
+    user.reload();
     if (user.emailVerified) {
-      user.reload();
       setState(() {
         loggedInUser.verified = user.emailVerified;
       });
       Fluttertoast.showToast(
-          msg: 'Email already verified',
+          msg: 'Email verified',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,

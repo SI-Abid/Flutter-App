@@ -5,7 +5,7 @@ class UserModel {
   String name;
   String email;
   String id;
-  String? photoUrl;
+  String? imageUrl;
   String phone;
   String role;
   bool verified;
@@ -15,7 +15,7 @@ class UserModel {
     required this.name,
     required this.email,
     required this.id,
-    this.photoUrl,
+    this.imageUrl,
     required this.phone,
     required this.role,
     required this.verified,
@@ -30,7 +30,7 @@ class UserModel {
       name: data['name'],
       email: data['email'],
       id: data['id'],
-      photoUrl: data['photoUrl'],
+      imageUrl: data['imageUrl'],
       phone: data['phone'],
       role: data['role'],
       verified: data['verified'],
@@ -44,7 +44,7 @@ class UserModel {
       'name': name,
       'email': email,
       'id': id,
-      'photoUrl': photoUrl,
+      'imageUrl': imageUrl,
       'phone': phone,
       'role': role,
       'verified': verified,
