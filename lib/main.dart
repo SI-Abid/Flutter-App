@@ -1,31 +1,22 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/api/firebase.dart';
 import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/screens/login.dart';
 
-import 'firebase_options.dart';
-
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-  // print(FirebaseAuth.instance.currentUser!);
-  runApp(MyApp());
+  await FirebaseApi.initialize();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({
+  const MyApp({
     Key? key,
   }) : super(key: key);
-  final navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: const MaterialColor(
@@ -44,8 +35,7 @@ class MyApp extends StatelessWidget {
             },
           ),
         ),
-        home: FirebaseAuth.instance.currentUser == null
-            ? const LoginScreen()
-            : const HomeScreen());
+        home:
+            FirebaseApi.isSignedIn ? const HomeScreen() : const LoginScreen());
   }
 }

@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/api/firebase.dart';
 import 'package:flutter_app/models/user.dart';
+import 'package:flutter_app/screens/chat.dart';
 import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/screens/imageupload.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,13 +16,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  User user = FirebaseAuth.instance.currentUser as User;
-  final ref = FirebaseFirestore.instance
-      .collection('users')
-      .withConverter(
-          fromFirestore: UserModel.fromMap,
-          toFirestore: (user, _) => user.toMap())
-      .doc(FirebaseAuth.instance.currentUser!.uid);
+  User user = FirebaseApi.currentUser as User;
+  final ref = FirebaseApi.userRef("users");
   late UserModel loggedInUser;
   bool isLoading = true;
 
@@ -149,8 +146,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
+            icon: Icon(Icons.message),
+            label: 'Chat',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -167,6 +164,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       )),
             );
           }
+          if (index == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatScreen(
+                        user: loggedInUser,
+                      )),
+            );
+          }
         },
       ),
     );
@@ -176,8 +182,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     user.reload();
     if (user.emailVerified) {
       setState(() {
-        loggedInUser.verified = user.emailVerified;
-        // save to server
+        loggedInUser.verified = true;
+        // update server
         ref.set(loggedInUser);
       });
       Fluttertoast.showToast(

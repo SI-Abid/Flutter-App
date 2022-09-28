@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/api/firebase.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageUpload extends StatefulWidget {
@@ -30,16 +30,12 @@ class _ImageUploadState extends State<ImageUpload> {
   }
 
   uploadImage() async {
-    final ref = FirebaseStorage.instance.ref().child("user_image").child("${widget.userId!}.jpg");
+    final ref = FirebaseApi.storageRef("user_image/${widget.userId!}.jpg");
     await ref.putFile(image!);
     downloadUrl = await ref.getDownloadURL();
-    // print(downloadUrl);
-    showSnackbar("Image uploaded", const Duration(milliseconds: 600));
-    Navigator.of(context).pop();
-    // set image url to user collection
-    await FirebaseFirestore.instance.collection("users").doc(widget.userId).update({
-      "imageUrl": downloadUrl,
-    });
+    showSnackbar("Image uploaded", const Duration(milliseconds: 400));
+    FirebaseApi.userRef("users").update({"imageUrl": downloadUrl})
+        .then((value) => Navigator.pop(context));
   }
 
   showSnackbar(String text, Duration d) {

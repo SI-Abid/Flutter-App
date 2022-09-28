@@ -1,7 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/api/firebase.dart';
 import 'package:flutter_app/models/user.dart';
+import 'package:flutter_app/screens/chat.dart';
 import 'package:flutter_app/screens/login.dart';
 import 'package:flutter_app/screens/profile.dart';
 
@@ -24,15 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isLoading = false;
       return;
     }
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .withConverter(
-          fromFirestore: UserModel.fromMap,
-          toFirestore: (user, _) => user.toMap(),
-        )
-        .get()
-        .then((value) {
+    FirebaseApi.userRef("users").get().then((value) {
       setState(() {
         user = value.data()!;
         isLoading = false;
@@ -53,8 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: 'Home',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.search),
-                  label: 'Search',
+                  icon: Icon(Icons.message),
+                  label: 'Chat',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),
@@ -67,6 +60,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => const ProfileScreen()),
+                  );
+                }
+                if (index == 1) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ChatScreen(user: user)),
                   );
                 }
               },
@@ -126,11 +126,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> logOut(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const LoginScreen(),
-      ),
-    );
+    FirebaseApi.signOut().then((_) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
+      );
+    });
   }
 }

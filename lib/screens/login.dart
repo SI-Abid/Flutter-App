@@ -234,8 +234,8 @@ class _LoginScreenState extends State<LoginScreen> {
           .collection('users')
           .doc(value.user!.uid)
           .withConverter(
-            fromFirestore: UserModel.fromMap,
-            toFirestore: (user, _) => user.toMap(),
+            fromFirestore: UserModel.fromJson,
+            toFirestore: (user, _) => user.toJson(),
           )
           .get();
       final user = snap.data()!;

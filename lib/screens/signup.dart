@@ -399,8 +399,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // ref.enableNetwork();
     final doc =
         ref.collection('users').doc(auth.currentUser!.uid).withConverter(
-              fromFirestore: UserModel.fromMap,
-              toFirestore: (user, _) => user.toMap(),
+              fromFirestore: UserModel.fromJson,
+              toFirestore: (user, _) => user.toJson(),
             );
 
     final User? user = auth.currentUser;

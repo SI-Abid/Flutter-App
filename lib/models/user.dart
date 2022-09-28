@@ -22,7 +22,7 @@ class UserModel {
   });
 
   // getting from server
-  factory UserModel.fromMap(DocumentSnapshot<Map<String, dynamic>> snapshot,
+  factory UserModel.fromJson(DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options) {
     final data = snapshot.data() as Map<String, dynamic>;
     return UserModel(
@@ -38,7 +38,7 @@ class UserModel {
   }
 
   // sending to server
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'uid': uid,
       'name': name,
