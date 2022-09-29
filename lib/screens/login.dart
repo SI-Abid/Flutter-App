@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/api/firebase.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/screens/signup.dart';
@@ -230,14 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
         .then((value) async {
       print('signed in');
       // get user data
-      final snap = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(value.user!.uid)
-          .withConverter(
-            fromFirestore: UserModel.fromJson,
-            toFirestore: (user, _) => user.toJson(),
-          )
-          .get();
+      final snap = await FirebaseApi.ref('users').get();
       final user = snap.data()!;
       // print(user!.name);
       // remove loading indicator

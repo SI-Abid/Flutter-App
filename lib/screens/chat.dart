@@ -1,4 +1,6 @@
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/api/firebase.dart';
 import 'package:flutter_app/models/chat.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/screens/home.dart';
@@ -90,16 +92,42 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
       // list builder for messages
-      body: ListView.builder(
-        itemCount: 100,
-        itemBuilder: (context, index) {
-          return const ChatModel();
-        },
-      ),
+      body: SafeArea(
+          child: StreamBuilder<List<UserModel>>(
+              stream: FirebaseApi.userStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return const Center(child: Text('Something went wrong'));
+                }
+
+                final List<UserModel> users = snapshot.data!;
+                if (users.isEmpty) {
+                  return const Center(child: Text('No Data'));
+                }
+                return Column(
+                  children: [
+                    ChatHeader(users: users),
+                    ChatBody(users: users),
+                  ],
+                );
+              })),
+
       // bottom button for sending messages
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         child: const Icon(Icons.send_rounded),
+      ),
+    );
+  }
+
+  Widget buildText(String text) {
+    return Center(
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 24, color: Colors.white),
       ),
     );
   }

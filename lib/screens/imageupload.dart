@@ -34,7 +34,7 @@ class _ImageUploadState extends State<ImageUpload> {
     await ref.putFile(image!);
     downloadUrl = await ref.getDownloadURL();
     showSnackbar("Image uploaded", const Duration(milliseconds: 400));
-    FirebaseApi.userRef("users").update({"imageUrl": downloadUrl})
+    FirebaseApi.ref("users").update({"imageUrl": downloadUrl})
         .then((value) => Navigator.pop(context));
   }
 

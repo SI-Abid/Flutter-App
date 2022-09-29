@@ -5,6 +5,7 @@ import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/screens/chat.dart';
 import 'package:flutter_app/screens/login.dart';
 import 'package:flutter_app/screens/profile.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserModel? user;
@@ -25,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isLoading = false;
       return;
     }
-    FirebaseApi.userRef("users").get().then((value) {
+    FirebaseApi.ref("users").get().then((value) {
       setState(() {
         user = value.data()!;
         isLoading = false;
@@ -118,6 +119,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       label: const Text('Logout'),
                       onPressed: () => logOut(context),
                     ),
+                    // button
+                    // ElevatedButton(
+                    //     onPressed: () async {
+                    //       print('button pressed-first');
+                    //       final data = await FirebaseApi.getUsers();
+                    //       data.forEach((element) {
+                    //         print(element.toJson());
+                    //       });
+                    //       print('button pressed-last');
+                    //     },
+                    //     child: const Text('Demo Button'))
                   ],
                 ),
               ),

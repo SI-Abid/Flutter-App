@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/api/firebase.dart';
 import 'package:flutter_app/screens/home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -395,13 +395,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   saveToFirestore() async {
-    final ref = FirebaseFirestore.instance;
-    // ref.enableNetwork();
-    final doc =
-        ref.collection('users').doc(auth.currentUser!.uid).withConverter(
-              fromFirestore: UserModel.fromJson,
-              toFirestore: (user, _) => user.toJson(),
-            );
+    final doc = FirebaseApi.ref('users');
 
     final User? user = auth.currentUser;
 

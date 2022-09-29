@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/api/firebase.dart';
@@ -17,7 +16,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   User user = FirebaseApi.currentUser as User;
-  final ref = FirebaseApi.userRef("users");
+  final ref = FirebaseApi.ref("users");
   late UserModel loggedInUser;
   bool isLoading = true;
 
@@ -60,8 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       CircleAvatar(
                         radius: 80.0,
-                        backgroundImage: NetworkImage(loggedInUser.imageUrl ??
-                            'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png'),
+                        backgroundImage: NetworkImage(loggedInUser.imageUrl),
                       ),
                       Positioned(
                         bottom: 20.0,
