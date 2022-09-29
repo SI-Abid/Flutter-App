@@ -34,9 +34,8 @@ class ChatHeader extends StatelessWidget {
         height: 60,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: users.length,
+          itemCount: users.length+1,
           itemBuilder: (context, index) {
-            final user = users[index];
             if (index == 0) {
               return Container(
                 margin: const EdgeInsets.only(right: 12),
@@ -46,6 +45,7 @@ class ChatHeader extends StatelessWidget {
                 ),
               );
             } else {
+              final user = users[index-1];
               return Container(
                 margin: const EdgeInsets.only(right: 12),
                 child: GestureDetector(

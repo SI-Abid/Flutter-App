@@ -357,7 +357,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  void signUp() async {
+  Future<void> signUp() async {
     if (!formKey.currentState!.validate()) {
       return;
     }
@@ -394,7 +394,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
-  saveToFirestore() async {
+  Future saveToFirestore() async {
     final doc = FirebaseApi.ref('users');
 
     final User? user = auth.currentUser;

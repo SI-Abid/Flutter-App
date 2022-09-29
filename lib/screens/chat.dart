@@ -8,7 +8,7 @@ import 'package:flutter_app/screens/profile.dart';
 
 class ChatScreen extends StatefulWidget {
   final UserModel user;
-  const ChatScreen({Key? key, required this.user}) : super(key: key);
+  const ChatScreen({super.key, required this.user});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -103,7 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   return const Center(child: Text('Something went wrong'));
                 }
 
-                final List<UserModel> users = snapshot.data!;
+                final users = snapshot.data as List<UserModel>;
                 if (users.isEmpty) {
                   return const Center(child: Text('No Data'));
                 }
