@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/api/firebase.dart';
 import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/screens/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   await FirebaseApi.initialize();
   runApp(const MyApp());
+  // incrementCount();
+  await SharedPreferences.getInstance().then((prefs) {
+    final count = prefs.getInt('visited') ?? 0;
+    prefs.setInt('visited', count + 1);
+  });
 }
 
 class MyApp extends StatelessWidget {

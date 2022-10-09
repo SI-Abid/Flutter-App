@@ -1,11 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/api/firebase.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/screens/chat.dart';
 import 'package:flutter_app/screens/login.dart';
 import 'package:flutter_app/screens/profile.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserModel? user;
@@ -16,11 +15,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int count = 0;
   late UserModel user;
   bool isLoading = true;
+
+  Future<void> getCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    count = prefs.getInt('visited') ?? 0;
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
+    getCount();
     if (widget.user != null) {
       user = widget.user as UserModel;
       isLoading = false;
@@ -119,17 +127,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       label: const Text('Logout'),
                       onPressed: () => logOut(context),
                     ),
-                    // button
-                    // ElevatedButton(
-                    //     onPressed: () async {
-                    //       print('button pressed-first');
-                    //       final data = await FirebaseApi.getUsers();
-                    //       data.forEach((element) {
-                    //         print(element.toJson());
-                    //       });
-                    //       print('button pressed-last');
-                    //     },
-                    //     child: const Text('Demo Button'))
+                    const SizedBox(height: 20),
+                    Text(
+                      'Visited $count times',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
                   ],
                 ),
               ),
