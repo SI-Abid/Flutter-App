@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/api/firebase.dart';
@@ -25,7 +26,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // listen to changes in the user's email verification status
     super.initState();
     user.reload();
-    ref.get().then((value) {
+    ref.get(
+      const GetOptions(
+        source: Source.serverAndCache,
+      ),
+    ).then((value) {
       setState(() {
         loggedInUser = value.data()!;
         if (!loggedInUser.verified && user.emailVerified) {

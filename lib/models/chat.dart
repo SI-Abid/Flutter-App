@@ -84,6 +84,7 @@ class ChatBody extends StatelessWidget {
           ),
         ),
         child: ListView.builder(
+          physics: const BouncingScrollPhysics(),
           itemCount: users.length,
           itemBuilder: (context, index) {
             return ChatModel(user: users[index]);

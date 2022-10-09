@@ -60,37 +60,6 @@ class _ChatScreenState extends State<ChatScreen> {
           }
         },
       ),
-      appBar: AppBar(
-        title: const Text('Chat'),
-        // add search icon
-        // centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search),
-          ),
-          // 3 dot menu
-          PopupMenuButton(
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                child: Text('New Group'),
-              ),
-              const PopupMenuItem(
-                child: Text('New Broadcast'),
-              ),
-              const PopupMenuItem(
-                child: Text('WhatsApp Web'),
-              ),
-              const PopupMenuItem(
-                child: Text('Starred Messages'),
-              ),
-              const PopupMenuItem(
-                child: Text('Settings'),
-              ),
-            ],
-          ),
-        ],
-      ),
       // list builder for messages
       body: SafeArea(
           child: StreamBuilder<List<UserModel>>(
